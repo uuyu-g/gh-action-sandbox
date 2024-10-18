@@ -1,3 +1,3 @@
-function addadd(a: number, b: number): number {
+function add3(a: number, b: number): number {
   return a + b;
 }
