@@ -31,7 +31,8 @@ jobs:
         id: merge
         run: |
           git merge origin/main || echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
-          echo $GITHUB_OUTPUT
+
+      - run: echo ${{steps.merge.outputs.MERGE_CONFLICT}}
 
       - name: Push changes
         if: steps.merge.outputs.MERGE_CONFLICT != '1'
