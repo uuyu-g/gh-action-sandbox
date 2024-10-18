@@ -20,7 +20,7 @@ jobs:
 
       - name: Merge master into next
         run: |
-          git fetch origin master:master
+          git fetch origin master
           git merge master
           if [ $? -ne 0 ]; then
             echo "Merge conflict detected, creating a pull request."
