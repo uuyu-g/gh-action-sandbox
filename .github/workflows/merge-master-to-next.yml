@@ -35,6 +35,7 @@ jobs:
           if [ -n ${{ steps.merge.outputs.MERGE_CONFLICT }} ]; then
             echo "Merge conflict detected, will create a pull request."
             git merge --abort
+            git checkout main
             echo "RESULT=failure" >> "$GITHUB_OUTPUT"
           else
             echo "RESULT=success" >> "$GITHUB_OUTPUT"
