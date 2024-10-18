@@ -22,12 +22,13 @@ jobs:
       - uses: fregante/setup-git-user@v2
 
       - name: Merge main into next
+        id: merge
         run: git merge origin/main || echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
 
       - name: Check flag
         id: result
         run: |
-          if [ -n "$MERGE_CONFLICT" ]; then
+          if [ -n ${{ steps.merge.outputs.MERGE_CONFLICT }} ]; then
             echo "Merge conflict detected, will create a pull request."
             git merge --abort
             echo "RESULT=failure" >> "$GITHUB_OUTPUT"
