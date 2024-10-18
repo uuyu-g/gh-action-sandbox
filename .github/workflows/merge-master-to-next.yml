@@ -30,26 +30,20 @@ jobs:
       - name: Merge main into next
         id: merge
         run: |
-          echo "MERGE_CONFLICT=0" >> "$GITHUB_OUTPUT"
-          git merge origin/main || git merge --abort && echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
+          git merge origin/main || echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
 
-      - name: Check flag
-        id: result
-        run: |
-          if [ -n ${{ steps.merge.outputs.MERGE_CONFLICT }} ]; then
-            echo "Merge conflict detected, will create a pull request."
-            echo "RESULT=failure" >> "$GITHUB_OUTPUT"
-          else
-            echo "RESULT=success" >> "$GITHUB_OUTPUT"
-          fi
+      - run: echo ${{steps.merge.outputs.MERGE_CONFLICT}}
 
       - name: Push changes
-        run: git push origin next
-        if: steps.result.outputs.RESULT == 'success'
+        if: steps.merge.outputs.MERGE_CONFLICT != '1'
+        run: |
+          git fetch origin
+          git rebase origin/next
+          git push origin next
 
       - name: Create a new PR if there are conflicts
+        if: steps.merge.outputs.MERGE_CONFLICT == '1'
         uses: peter-evans/create-pull-request@v7
-        if: steps.result.outputs.RESULT == 'failure'
         with:
           title: 'Merge main into next'
           body: 'This PR is created automatically due to merge conflicts.'
