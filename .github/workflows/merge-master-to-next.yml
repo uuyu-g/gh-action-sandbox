@@ -9,7 +9,7 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout master branch
+      - name: Checkout next branch
         uses: actions/checkout@v4
         with:
           ref: next
@@ -18,10 +18,10 @@ jobs:
 
       - uses: fregante/setup-git-user@v2
 
-      - name: Merge master into next
+      - name: Merge main into next
         run: |
-          git fetch origin master
-          git merge master
+          git fetch origin main
+          git merge main
           if [ $? -ne 0 ]; then
             echo "Merge conflict detected, creating a pull request."
             # Fallback to abort, remove this if you decide to handle conflicts in a different way
@@ -37,6 +37,6 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         if: ${{ failure() }}
         with:
-          title: 'Merge master into next'
+          title: 'Merge main into next'
           body: 'This PR is created automatically due to merge conflicts.'
-          branch: 'merge-master-into-next-${{ github.run_id }}'
+          branch: 'merge-main-into-next-${{ github.run_id }}'
