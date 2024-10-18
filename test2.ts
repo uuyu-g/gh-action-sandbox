@@ -1,1 +1,1 @@
-export const hoge = 2;
+export const hoge = 3;
