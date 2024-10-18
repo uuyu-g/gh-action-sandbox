@@ -24,8 +24,8 @@ jobs:
       - name: Merge main into next
         id: merge
         run: |
-          git merge origin/main || echo "Merge conflict detected, will create a pull request." && git merge --abort && echo "RESULT=failure" >> "$GITHUB_ENV"
-          if [ -z $RESULT ]; then echo "RESULT=success" >> "$GITHUB_ENV"; fi
+          git merge origin/main || echo "Merge conflict detected, will create a pull request." && git merge --abort && echo "RESULT=failure" >> "$GITHUB_OUTPUT"
+          if [ -z $RESULT ]; then echo "RESULT=success" >> "$GITHUB_OUTPUT"; fi
 
       - name: Push changes
         run: git push origin next
