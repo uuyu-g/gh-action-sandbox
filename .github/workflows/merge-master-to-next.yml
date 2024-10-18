@@ -51,4 +51,5 @@ jobs:
         with:
           title: 'Merge main into next'
           body: 'This PR is created automatically due to merge conflicts.'
-          branch: next
+          branch: 'merge-main-into-next-${{ github.sha }}'
+          base: next
