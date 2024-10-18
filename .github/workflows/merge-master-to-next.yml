@@ -16,11 +16,14 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fetch other branches
+        run: git fetch origin main
+
       - uses: fregante/setup-git-user@v2
 
       - name: Merge main into next
         run: |
-          git merge main
+          git merge origin/main
           if [ $? -ne 0 ]; then
             echo "Merge conflict detected, creating a pull request."
             # Fallback to abort, remove this if you decide to handle conflicts in a different way
