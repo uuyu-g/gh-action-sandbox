@@ -22,22 +22,26 @@ jobs:
       - uses: fregante/setup-git-user@v2
 
       - name: Merge main into next
+        id: merge
         run: |
           git merge origin/main
-          if [ $? -ne 0 ]; then
+          if [ $? -ne 0 ]
+          then
             echo "Merge conflict detected, creating a pull request."
             # Fallback to abort, remove this if you decide to handle conflicts in a different way
             git merge --abort
-            exit 1
+            echo "RESULT=failure" >> "$GITHUB_OUTPUT"
+          else
+            echo "RESULT=success" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Push changes
         run: git push origin next
-        if: ${{ success() }}
+        if: steps.merge.outputs.RESULT == 'success'
 
       - name: Create a new PR if there are conflicts
         uses: peter-evans/create-pull-request@v7
-        if: ${{ failure() }}
+        if: steps.merge.outputs.RESULT == 'failure'
         with:
           title: 'Merge main into next'
           body: 'This PR is created automatically due to merge conflicts.'
