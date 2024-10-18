@@ -36,7 +36,10 @@ jobs:
 
       - name: Push changes
         if: steps.merge.outputs.MERGE_CONFLICT != '1'
-        run: git push origin next
+        run: |
+          git fetch origin
+          git rebase origin/next
+          git push origin next
 
       - name: Create a new PR if there are conflicts
         if: steps.merge.outputs.MERGE_CONFLICT == '1'
