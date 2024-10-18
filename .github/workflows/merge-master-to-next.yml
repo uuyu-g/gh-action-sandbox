@@ -24,16 +24,8 @@ jobs:
       - name: Merge main into next
         id: merge
         run: |
-          git merge origin/main
-          if [ $? -ne 0 ]
-          then
-            echo "Merge conflict detected, creating a pull request."
-            # Fallback to abort, remove this if you decide to handle conflicts in a different way
-            git merge --abort
-            echo "RESULT=failure" >> "$GITHUB_OUTPUT"
-          else
-            echo "RESULT=success" >> "$GITHUB_OUTPUT"
-          fi
+          git merge origin/main || echo "Merge conflict detected, will create a pull request." && git merge --abort && echo "RESULT=failure" >> "$GITHUB_ENV"
+          if [ -z $RESULT ]; then echo "RESULT=success" >> "$GITHUB_ENV"; fi
 
       - name: Push changes
         run: git push origin next
