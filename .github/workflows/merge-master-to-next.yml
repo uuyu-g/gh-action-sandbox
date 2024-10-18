@@ -29,7 +29,9 @@ jobs:
 
       - name: Merge main into next
         id: merge
-        run: git merge origin/main || echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "MERGE_CONFLICT=0" >> "$GITHUB_OUTPUT"
+          git merge origin/main || echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
 
       - name: Check flag
         id: result
