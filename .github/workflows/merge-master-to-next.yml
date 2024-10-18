@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   merge:
     runs-on: ubuntu-latest
@@ -47,3 +51,4 @@ jobs:
           title: 'Merge main into next'
           body: 'This PR is created automatically due to merge conflicts.'
           branch: 'merge-main-into-next-${{ github.run_id }}'
+          base: 'next'
