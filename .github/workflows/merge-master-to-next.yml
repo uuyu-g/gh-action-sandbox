@@ -25,7 +25,7 @@ jobs:
       - name: Reset branch
         run: |
           git fetch origin main:main
-          git reset --hard main
+        # git reset --hard main
 
       - name: Merge main into next
         id: merge
