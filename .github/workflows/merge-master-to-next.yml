@@ -24,7 +24,7 @@ jobs:
       - name: Merge main into next
         run: |
           git fetch origin main
-          git merge origin/main --no-ff
+          git merge origin/main --no-ff --allow-unrelated-histories
           git push origin next
 
       - name: Create a new PR if there are conflicts
