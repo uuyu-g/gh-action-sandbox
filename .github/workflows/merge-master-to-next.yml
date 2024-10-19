@@ -31,8 +31,10 @@ jobs:
         if: ${{ failure()}}
         run: |
           git merge --abort
+          git checkout -b merge-main-to-next origin/main
+          git push origin merge-main-to-next --force-with-lease
           gh pr create \
             --base next \
-            --head main \
+            --head merge-main-to-next \
             --title "Merge main into next" \
             --body "This PR was created automatically because there were conflicts when merging main into next."
