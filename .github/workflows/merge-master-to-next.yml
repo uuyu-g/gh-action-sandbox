@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 permissions:
   contents: write
   pull-requests: write
@@ -19,7 +22,7 @@ jobs:
       - name: Merge main into next
         run: |
           git fetch origin next
-          git checkout -b next origin/next
+          git checkout -b next refs/remotes/origin/next
           git merge main --no-ff
           git push origin next
 
