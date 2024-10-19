@@ -18,14 +18,11 @@ jobs:
     steps:
       - name: Checkout next branch
         uses: actions/checkout@v4
-        with:
-          ref: next
       - uses: fregante/setup-git-user@v2
-
       - name: Merge main into next
         run: |
-          git fetch origin main
-          git merge origin/main --no-ff --allow-unrelated-histories
+          git checkout -b next origin/next
+          git merge main --no-ff --allow-unrelated-histories
           git push origin next
 
       - name: Create a new PR if there are conflicts
