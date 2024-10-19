@@ -19,7 +19,7 @@ jobs:
       - name: Merge main into next
         id: merge
         run: |
-          git checkout next
+          git checkout -b next origin/next
           git merge main
           git push origin next
 
