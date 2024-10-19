@@ -15,36 +15,17 @@ jobs:
     steps:
       - name: Checkout next branch
         uses: actions/checkout@v4
-        with:
-          ref: next
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: fregante/setup-git-user@v2
-
-      - name: Reset branch
-        run: |
-          git fetch origin main:main
-        # git reset --hard main
 
       - name: Merge main into next
         id: merge
         run: |
-          git merge origin/main || echo "MERGE_CONFLICT=1" >> "$GITHUB_OUTPUT"
-
-      - run: echo ${{steps.merge.outputs.MERGE_CONFLICT}}
-
-      - name: Push changes
-        if: steps.merge.outputs.MERGE_CONFLICT != '1'
-        run: |
-          git fetch origin
-          git rebase origin/next
+          git checkout next
+          git merge main
           git push origin next
 
       - name: Create a new PR if there are conflicts
-        if: steps.merge.outputs.MERGE_CONFLICT == '1'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          title: 'Merge main into next'
-          body: 'This PR is created automatically due to merge conflicts.'
-          branch: 'next-temp'
+        if: ${{ failure()}}
+        run: |
+          git checkout -b merge-main-to-next
+          git push origin merge-main-to-next
+          gh pr create --base next --head merge-main-to-next --title "Merge main into next" --body "This PR was created automatically because there were conflicts when merging main into next."
