@@ -31,6 +31,7 @@ jobs:
       - name: Create a new PR if there are conflicts
         if: ${{ failure()}}
         run: |
-          git checkout -b merge-main-to-next-${{ github.run_number }} origin/main
-          git push origin merge-main-to-next-${{ github.run_number }}
-          gh pr create --base next --head merge-main-to-next-${{ github.run_number }} --title "Merge main into next" --body "This PR was created automatically because there were conflicts when merging main into next."
+          git merge --abort
+          git checkout -b merge-main-to-next origin/main
+          git push origin merge-main-to-next
+          gh pr create --base next --head merge-main-to-next --title "Merge main into next" --body "This PR was created automatically because there were conflicts when merging main into next."
