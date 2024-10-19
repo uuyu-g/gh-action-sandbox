@@ -21,6 +21,7 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Merge main into next
         run: |
+          git fetch origin next
           git checkout -b next origin/next
           git merge main --no-ff --allow-unrelated-histories
           git push origin next
