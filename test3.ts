@@ -1,1 +1,1 @@
-console.log('test6.ts!!');
+console.log('test5.ts');
