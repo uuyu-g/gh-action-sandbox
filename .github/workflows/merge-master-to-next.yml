@@ -18,11 +18,12 @@ jobs:
     steps:
       - name: Checkout next branch
         uses: actions/checkout@v4
+        with:
+          ref: next
 
       - name: Merge main into next
         run: |
-          git fetch origin next
-          git checkout -b next refs/remotes/origin/next
+          git fetch origin main
           git merge main --no-ff
           git push origin next
 
