@@ -18,11 +18,11 @@ jobs:
     steps:
       - name: Checkout next branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: fregante/setup-git-user@v2
       - name: Merge main into next
         run: |
-          git pull origin main
-          git fetch origin next
           git checkout -b next origin/next
           git merge main --no-ff
           git push origin next
