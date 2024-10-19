@@ -19,13 +19,12 @@ jobs:
       - name: Checkout next branch
         uses: actions/checkout@v4
         with:
-          ref: next
+          fetch-depth: 0
       - uses: fregante/setup-git-user@v2
-
       - name: Merge main into next
         run: |
-          git fetch origin main
-          git merge origin/main --no-ff --allow-unrelated-histories
+          git checkout -b next origin/next
+          git merge main --no-ff
           git push origin next
 
       - name: Create a new PR if there are conflicts
@@ -33,5 +32,5 @@ jobs:
         run: |
           git merge --abort
           git checkout -b merge-main-to-next origin/main
-          git push origin merge-main-to-next
+          git push origin merge-main-to-next --force
           gh pr create --base next --head merge-main-to-next --title "Merge main into next" --body "This PR was created automatically because there were conflicts when merging main into next."
