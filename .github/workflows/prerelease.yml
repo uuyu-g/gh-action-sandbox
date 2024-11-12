@@ -31,7 +31,7 @@ jobs:
 
       - name: Push Upstream
         run: |
-          git push origin dev
+          git push origin HEAD
 
       - uses: actions/create-release@v1
         with:
