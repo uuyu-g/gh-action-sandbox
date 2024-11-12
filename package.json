@@ -1,0 +1,20 @@
+{
+  "name": "gh-action-sandbox",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uuyu-g/gh-action-sandbox.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uuyu-g/gh-action-sandbox/issues"
+  },
+  "homepage": "https://github.com/uuyu-g/gh-action-sandbox#readme"
+}

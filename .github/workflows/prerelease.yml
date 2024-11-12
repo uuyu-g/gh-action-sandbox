@@ -1,0 +1,42 @@
+name: Release Dev Version
+
+on:
+  workflow_dispatch:
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - next
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Set Version
+        id: version
+        run: |
+          NEW_VERSION=$(npm version prerelease --preid=dev --no-git-tag-version)
+          echo "VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "HASH=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Push Upstream
+        run: |
+          git push origin dev
+
+      - uses: actions/create-release@v1
+        with:
+          draft: true
+          tag_name: v${{steps.version.outputs.NEW_VERSION}}
+          release_name: v${{steps.version.outputs.NEW_VERSION}}
+          commitish: ${{steps.version.outputs.HASH}}
+          prerelease: true
