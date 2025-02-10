@@ -10,13 +10,36 @@ jobs:
   vrt:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+
+      # ベースブランチのスナップショットを撮る
+      - name: Checkout base branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '22'
       - name: Install dependencies
         run: npm install
-      - name: Run VRT
-        run: npm run vrt
+      - name: Take snapshot of base branch
+        run: npm run vrt:expected
+
+      # プルリクエストのスナップショットを撮る
+      - name: Checkout head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Take snapshot of head branch
+        run: npm run vrt:actual
+
+      # スナップショットを比較する
+      - name: Compare snapshots
+        run: npm run vrt:compare
+      
