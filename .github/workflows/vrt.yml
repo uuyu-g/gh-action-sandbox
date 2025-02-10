@@ -19,9 +19,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "22"
-
       - name: Install dependencies
         run: npm install
+
       - name: Take snapshot of base branch
         run: npm run vrt:snapshot
 
@@ -45,6 +45,7 @@ jobs:
           node-version: "22"
       - name: Install dependencies
         run: npm install
+
       - name: Take snapshot of head branch
         run: npm run vrt:snapshot
 
@@ -80,10 +81,6 @@ jobs:
         with:
           name: vrt-actual
           path: actual
-      - name: Debug
-        run: |
-          ls -la
-          cat expected/snapshot.txt
-          cat actual/snapshot.txt
+
       - name: Compare snapshots
         run: npm run vrt:diff
