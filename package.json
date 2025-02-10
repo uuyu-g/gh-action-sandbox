@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "vrt": "cat test2.ts",
-    "vrt:snapshot": "touch snapshot.txt && cat test2.ts >> snapshot.txt",
-    "vrt:diff": "diff -u expected/snapshot.txt actual/snapshot.txt",
+    "vrt:snapshot": "playwright test",
+    "vrt:diff": "npx reg-cli snapshots/actual snapshots/expected snapshots/diff -R snapshots/report.html",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
