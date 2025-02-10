@@ -41,5 +41,5 @@ jobs:
 
       # スナップショットを比較する
       - name: Compare snapshots
-        run: npm run vrt:compare
+        run: npm run vrt:diff
       
