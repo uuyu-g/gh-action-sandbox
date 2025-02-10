@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Install playwright
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
       - name: Build storybook
         run: npm run build-storybook
@@ -38,14 +38,16 @@ jobs:
           name: vrt-expected
           path: snapshots
 
-  # PRのスナップショットを撮る
-  acutual_snapshot:
+  # Playwrightを使って比較する
+  compare:
     runs-on: ubuntu-latest
+    needs: expected_snapshot
     steps:
       - name: Checkout head branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -53,7 +55,13 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Install playwright
-        run: npx playwright install
+        run: npx playwright install --with-deps
+
+      - name: Download snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: vrt-expected
+          path: snapshots
 
       - name: Build storybook
         run: npm run build-storybook
@@ -61,40 +69,11 @@ jobs:
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6006 --silent" \
-            "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:snapshot"
+            "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:compare"
 
-      - name: Upload snapshot
+      - name: Upload report
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: vrt-actual
-          path: snapshots
-
-  # スナップショットを比較する
-  compare:
-    runs-on: ubuntu-latest
-    needs: [expected_snapshot, acutual_snapshot]
-    steps:
-      - name: Checkout head branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22"
-      - name: Install dependencies
-        run: npm install
-
-      - name: Download snapshot
-        uses: actions/download-artifact@v4
-        with:
-          name: vrt-expected
-          path: snapshots/expected
-      - name: Download snapshot
-        uses: actions/download-artifact@v4
-        with:
-          name: vrt-actual
-          path: snapshots/actual
-
-      - name: Compare snapshots
-        run: npm run vrt:diff
+          name: vrt-report
+          path: playwright-report

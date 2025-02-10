@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "vrt": "cat test2.ts",
-    "vrt:snapshot": "playwright test",
-    "vrt:diff": "reg-cli snapshots/actual snapshots/expected snapshots/diff -R snapshots/report.html",
+    "vrt:snapshot": "PLAYWRIGHT_HTML_OPEN=never npx playwright test -- tests/capture.test.ts",
+    "vrt:diff": "PLAYWRIGHT_HTML_OPEN=never npx playwright test -- tests/compare.test.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
