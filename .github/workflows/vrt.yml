@@ -9,7 +9,9 @@ on:
 jobs:
   # ベースブランチのスナップショットを撮る
   expected_snapshot:
+    container: mcr.microsoft.com/playwright:v1.50.1-jammy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -19,10 +21,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "22"
+          cache: 'npm'
       - name: Install dependencies
         run: npm install
-      - name: Install playwright
-        run: npx playwright install --with-deps
 
       - name: Build storybook
         run: npm run build-storybook
@@ -32,15 +33,19 @@ jobs:
             "npx http-server storybook-static --port 6006 --silent" \
             "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:snapshot"
 
-      - name: Upload snapshot
-        uses: actions/upload-artifact@v4
+      - name: Cache snapshot
+        uses: actions/cache@v3
         with:
-          name: vrt-expected
           path: snapshots
+          key: ${{ runner.os }}-vrt-expected-${{ github.sha }}
+          restore-keys: |
+        ${{ runner.os }}-vrt-expected-
 
   # Playwrightを使って比較する
   compare:
+    container: mcr.microsoft.com/playwright:v1.50.1-jammy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: expected_snapshot
     steps:
       - name: Checkout head branch
@@ -52,16 +57,17 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "22"
+          cache: 'npm'
       - name: Install dependencies
         run: npm install
-      - name: Install playwright
-        run: npx playwright install --with-deps
 
-      - name: Download snapshot
-        uses: actions/download-artifact@v4
+      - name: Restore snapshot from cache
+        uses: actions/cache@v3
         with:
-          name: vrt-expected
           path: snapshots
+          key: ${{ runner.os }}-vrt-expected-${{ github.sha }}
+          restore-keys: |
+        ${{ runner.os }}-vrt-expected-
 
       - name: Build storybook
         run: npm run build-storybook
@@ -69,7 +75,7 @@ jobs:
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6006 --silent" \
-            "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:compare"
+            "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:diff"
 
       - name: Upload report
         if: failure()
