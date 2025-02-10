@@ -5,9 +5,8 @@
   "main": "index.js",
   "scripts": {
     "vrt": "cat test2.ts",
-    "vrt:expected": "touch snapshot.txt && cat test2.ts >> expected.txt",
-    "vrt:actual": "touch snapshot.txt && cat test2.ts >> actual.txt",
-    "vrt:diff": "diff -u expected.txt actual.txt",
+    "vrt:snapshot": "touch snapshot.txt && cat test2.ts >> snapshot.txt",
+    "vrt:diff": "diff -u expected/snapshot.txt actual/snapshot.txt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

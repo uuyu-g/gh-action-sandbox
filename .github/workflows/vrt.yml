@@ -23,13 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Take snapshot of base branch
-        run: npm run vrt:expected
+        run: npm run vrt:snapshot
 
       - name: Upload snapshot
         uses: actions/upload-artifact@v4
         with:
           name: vrt-expected
-          path: expected.txt
+          path: snapshot.txt
 
   # PRのスナップショットを撮る
   acutual_snapshot:
@@ -46,13 +46,13 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Take snapshot of head branch
-        run: npm run vrt:actual
+        run: npm run vrt:snapshot
 
       - name: Upload snapshot
         uses: actions/upload-artifact@v4
         with:
           name: vrt-actual
-          path: actual.txt
+          path: snapshot.txt
 
   # スナップショットを比較する
   compare:
@@ -74,14 +74,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vrt-expected
+          path: expected
       - name: Download snapshot
         uses: actions/download-artifact@v4
         with:
           name: vrt-actual
+          path: actual
       - name: Debug
         run: |
           ls -la
-          cat expected.txt
-          cat actual.txt
+          cat expected/snapshot.txt
+          cat actual/snapshot.txt
       - name: Compare snapshots
         run: npm run vrt:diff
