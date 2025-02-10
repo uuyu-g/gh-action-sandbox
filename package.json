@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "vrt": "cat test2.ts",
-    "vrt:snapshot": "touch snapshot.txt && cat test2.ts >> snapshot.txt",
-    "vrt:diff": "diff -u expected/snapshot.txt actual/snapshot.txt",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "vrt:snapshot": "playwright test",
+    "vrt:diff": "npx reg-cli snapshots/actual snapshots/expected snapshots/diff -R snapshots/report.html",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,19 @@
   "bugs": {
     "url": "https://github.com/uuyu-g/gh-action-sandbox/issues"
   },
-  "homepage": "https://github.com/uuyu-g/gh-action-sandbox#readme"
+  "homepage": "https://github.com/uuyu-g/gh-action-sandbox#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@storybook/addon-essentials": "^8.5.3",
+    "@storybook/addon-interactions": "^8.5.3",
+    "@storybook/addon-onboarding": "^8.5.3",
+    "@storybook/blocks": "^8.5.3",
+    "@storybook/react": "^8.5.3",
+    "@storybook/react-vite": "^8.5.3",
+    "@storybook/test": "^8.5.3",
+    "@types/node": "^22.13.1",
+    "prop-types": "^15.8.1",
+    "reg-cli": "^0.18.10",
+    "storybook": "^8.5.3"
+  }
 }
