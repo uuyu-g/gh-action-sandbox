@@ -6,7 +6,7 @@
   "scripts": {
     "vrt": "cat test2.ts",
     "vrt:snapshot": "playwright test",
-    "vrt:diff": "npx reg-cli snapshots/actual snapshots/expected snapshots/diff -R snapshots/report.html",
+    "vrt:diff": "reg-cli snapshots/actual snapshots/expected snapshots/diff -R snapshots/report.html",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
