@@ -33,13 +33,11 @@ jobs:
             "npx http-server storybook-static --port 6006 --silent" \
             "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:snapshot"
 
-      - name: Cache snapshot
-        uses: actions/cache@v3
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
         with:
+          name: vrt-expected
           path: snapshots
-          key: ${{ runner.os }}-vrt-expected-${{ github.sha }}
-          restore-keys: |
-        ${{ runner.os }}-vrt-expected-
 
   # Playwrightを使って比較する
   compare:
@@ -61,13 +59,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Restore snapshot from cache
-        uses: actions/cache@v3
+      - name: Download snapshot
+        uses: actions/download-artifact@v4
         with:
+          name: vrt-expected
           path: snapshots
-          key: ${{ runner.os }}-vrt-expected-${{ github.sha }}
-          restore-keys: |
-        ${{ runner.os }}-vrt-expected-
 
       - name: Build storybook
         run: npm run build-storybook
