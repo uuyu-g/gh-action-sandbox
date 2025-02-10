@@ -74,12 +74,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vrt-expected
-          path: expected.txt
       - name: Download snapshot
         uses: actions/download-artifact@v4
         with:
           name: vrt-actual
-          path: actual.txt
       - name: Debug
         run: |
           ls -la
