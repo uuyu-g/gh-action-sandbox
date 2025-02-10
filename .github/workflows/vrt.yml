@@ -22,28 +22,33 @@ jobs:
         with:
           node-version: "22"
           cache: 'npm'
-      - name: Install dependencies
+
+      - name: Restore snapshots
+        id: restore
+        uses: actions/cache/restore@v3
+        with:
+          key: reg-suit-cache-${{ github.event.pull_request.base.sha }}
+
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Install dependencies
         run: npm install
 
-      - name: Build storybook
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Build storybook
         run: npm run build-storybook
-      - name: Serve Storybook and run tests
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Serve Storybook and run tests
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6006 --silent" \
             "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:snapshot"
 
-      - name: Cache snapshots
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Cache snapshots
         uses: actions/cache/save@v3
         with:
           path: snapshots
           key: reg-suit-cache-${{ github.event.pull_request.base.sha }}
-        
-      # - name: Upload snapshot
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: vrt-expected
-      #     path: snapshots
 
   # Playwrightを使って比較する
   compare:
@@ -70,12 +75,6 @@ jobs:
         with:
           key: reg-suit-cache-${{ github.event.pull_request.base.sha }}
           path: snapshots
-
-      # - name: Download snapshot
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: vrt-expected
-      #     path: snapshots
 
       - name: Build storybook
         run: npm run build-storybook
