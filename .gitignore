@@ -7,3 +7,4 @@ storybook-static
 /blob-report/
 /playwright/.cache/
 /snapshots/
+reg.json

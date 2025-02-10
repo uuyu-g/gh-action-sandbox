@@ -9,6 +9,9 @@ const data = JSON.parse(
 
 const stories = Object.keys(data.entries).map((key) => data.entries[key]);
 
+const SNAPSHOT_DIR =
+  process.env["SNAPSHOT_DIR"] ?? resolve(__dirname, "..", "snapshots");
+
 /**
  * スクリーンショットを撮影する際にマスクする要素たち
  * アニメーションがある要素はマスクして余計なdiffが出ないようにする
@@ -28,7 +31,7 @@ test.describe.parallel("visual regression test", () => {
         waitUntil: "networkidle",
       });
       await page.screenshot({
-        path: `snapshots/${story.id}.png`,
+        path: `${SNAPSHOT_DIR}/${story.id}.png`,
         fullPage: true,
         animations: "disabled",
         mask: maskElements.map((maskElement) => page.locator(maskElement)),
