@@ -80,5 +80,10 @@ jobs:
         with:
           name: vrt-actual
           path: actual.txt
+      - name: Debug
+        run: |
+          ls -la
+          cat expected.txt
+          cat actual.txt
       - name: Compare snapshots
         run: npm run vrt:diff
