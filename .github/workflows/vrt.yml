@@ -11,6 +11,7 @@ jobs:
   expected_snapshot:
     container: mcr.microsoft.com/playwright:v1.50.1-jammy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -42,6 +43,7 @@ jobs:
   compare:
     container: mcr.microsoft.com/playwright:v1.50.1-jammy
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: expected_snapshot
     steps:
       - name: Checkout head branch
