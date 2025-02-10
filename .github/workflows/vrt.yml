@@ -41,6 +41,7 @@ jobs:
   # Playwrightを使って比較する
   compare:
     runs-on: ubuntu-latest
+    needs: expected_snapshot
     steps:
       - name: Checkout head branch
         uses: actions/checkout@v4
