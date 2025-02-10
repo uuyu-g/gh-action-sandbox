@@ -22,24 +22,33 @@ jobs:
         with:
           node-version: "22"
           cache: 'npm'
-      - name: Install dependencies
+
+      - name: Restore snapshots
+        id: restore
+        uses: actions/cache/restore@v3
+        with:
+          key: reg-suit-cache-${{ github.event.pull_request.base.sha }}
+
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Install dependencies
         run: npm install
 
-      - name: Build storybook
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Build storybook
         run: npm run build-storybook
-      - name: Serve Storybook and run tests
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Serve Storybook and run tests
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6006 --silent" \
             "npx wait-on tcp:127.0.0.1:6006 && npm run vrt:snapshot"
 
-      - name: Cache snapshot
-        uses: actions/cache@v3
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Cache snapshots
+        uses: actions/cache/save@v3
         with:
           path: snapshots
-          key: ${{ runner.os }}-vrt-expected-${{ github.sha }}
-          restore-keys: |
-        ${{ runner.os }}-vrt-expected-
+          key: reg-suit-cache-${{ github.event.pull_request.base.sha }}
 
   # Playwrightを使って比較する
   compare:
@@ -61,13 +70,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Restore snapshot from cache
-        uses: actions/cache@v3
+      - name: Restore snapshots
+        uses: actions/cache/restore@v3
         with:
+          key: reg-suit-cache-${{ github.event.pull_request.base.sha }}
           path: snapshots
-          key: ${{ runner.os }}-vrt-expected-${{ github.sha }}
-          restore-keys: |
-        ${{ runner.os }}-vrt-expected-
 
       - name: Build storybook
         run: npm run build-storybook
