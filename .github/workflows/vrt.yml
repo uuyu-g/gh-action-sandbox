@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Take snapshot of base branch
-        run: npm run vrt
+        run: npm run vrt:expected
 
       # プルリクエストのスナップショットを撮る
       - name: Checkout head branch
@@ -37,4 +37,9 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Take snapshot of head branch
-        run: npm run vrt
+        run: npm run vrt:actual
+
+      # スナップショットを比較する
+      - name: Compare snapshots
+        run: npm run vrt:compare
+      
