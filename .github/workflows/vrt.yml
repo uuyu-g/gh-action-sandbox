@@ -107,3 +107,4 @@ jobs:
           path: |
             snapshots/report.html
             snapshots/diff
+            snapshots/acutual
