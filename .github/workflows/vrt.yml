@@ -7,11 +7,10 @@ on:
       - vrt
 
 jobs:
-  vrt:
+  # ベースブランチのスナップショットを撮る
+  expected_snapshot:
     runs-on: ubuntu-latest
     steps:
-
-      # ベースブランチのスナップショットを撮る
       - name: Checkout base branch
         uses: actions/checkout@v4
         with:
@@ -19,13 +18,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: "22"
+
       - name: Install dependencies
         run: npm install
       - name: Take snapshot of base branch
-        run: npm run vrt:expected
+        run: npm run vrt:snapshot
 
-      # プルリクエストのスナップショットを撮る
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-expected
+          path: snapshot.txt
+
+  # PRのスナップショットを撮る
+  acutual_snapshot:
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout head branch
         uses: actions/checkout@v4
         with:
@@ -33,13 +42,48 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: "22"
       - name: Install dependencies
         run: npm install
       - name: Take snapshot of head branch
-        run: npm run vrt:actual
+        run: npm run vrt:snapshot
 
-      # スナップショットを比較する
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-actual
+          path: snapshot.txt
+
+  # スナップショットを比較する
+  compare:
+    runs-on: ubuntu-latest
+    needs: [expected_snapshot, acutual_snapshot]
+    steps:
+      - name: Checkout head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install
+
+      - name: Download snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: vrt-expected
+          path: expected
+      - name: Download snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: vrt-actual
+          path: actual
+      - name: Debug
+        run: |
+          ls -la
+          cat expected/snapshot.txt
+          cat actual/snapshot.txt
       - name: Compare snapshots
-        run: npm run vrt:compare
-      
+        run: npm run vrt:diff
