@@ -12,13 +12,10 @@ jobs:
     steps:
 
       # ベースブランチのスナップショットを撮る
-      - name: Get Base Branch
-        id: base_branch
-        run: echo "base_ref=$base_ref" >> $GITHUB_OUTPUT
-      - name: Checkout code
+      - name: Checkout base branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.get_base_ref.outputs.base_ref }}
+          ref: ${{ github.event.pull_request.base.ref }}
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -29,13 +26,10 @@ jobs:
         run: npm run vrt
 
       # プルリクエストのスナップショットを撮る
-      - name: Get Head Branch
-        id: head_branch
-        run: echo "head_ref=$head_ref" >> $GITHUB_OUTPUT
-      - name: Checkout code
+      - name: Checkout head branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.get_head_ref.outputs.head_ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
