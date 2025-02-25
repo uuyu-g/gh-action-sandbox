@@ -7,7 +7,6 @@ on:
 jobs:
   # ベースブランチのスナップショットを撮る
   expected_snapshot:
-    container: mcr.microsoft.com/playwright:v1.50.1-jammy
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: contains(github.event.label.name, 'vrt')
@@ -29,6 +28,9 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Install Playwright
+        run: npx playwright install --with-deps
       - if: steps.restore.outputs.cache-hit != 'true'
         name: Install dependencies
         run: npm install
