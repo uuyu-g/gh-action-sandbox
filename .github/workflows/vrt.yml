@@ -28,12 +28,13 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-      - if: steps.restore.outputs.cache-hit != 'true'
-        name: Install Playwright
-        run: npx playwright install --with-deps
+
       - if: steps.restore.outputs.cache-hit != 'true'
         name: Install dependencies
         run: npm install
+      - if: steps.restore.outputs.cache-hit != 'true'
+        name: Install Playwright
+        run: npx playwright install --with-deps
 
       - if: steps.restore.outputs.cache-hit != 'true'
         name: Build storybook
