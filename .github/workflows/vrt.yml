@@ -3,8 +3,6 @@ name: VRT
 on:
   pull_request:
     types: [synchronize, labeled]
-    labels:
-      - vrt
 
 jobs:
   # ベースブランチのスナップショットを撮る
@@ -12,6 +10,7 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.50.1-jammy
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: contains(github.event.label.name, 'vrt')
     steps:
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -28,7 +27,7 @@ jobs:
         name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: '22'
           cache: 'npm'
       - if: steps.restore.outputs.cache-hit != 'true'
         name: Install dependencies
@@ -66,7 +65,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: '22'
           cache: 'npm'
       - name: Install dependencies
         run: npm install
