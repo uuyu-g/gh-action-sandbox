@@ -1,11 +1,11 @@
-name: VRT
+name: reg VRT
 
 on:
   pull_request:
     types: [synchronize, labeled]
 
 env:
-  LABEL_NAME: 'vrt'
+  LABEL_NAME: 'vrt_reg'
 
 jobs:
   # ベースブランチのスナップショットを撮る
